@@ -2,6 +2,7 @@
 #define HITTABLE_HPP
 
 #include "ray.hpp"
+#include "interval.hpp"
 
 #include <memory>
 #include <vector>
@@ -24,7 +25,7 @@ class hit_record{
 
 class hittable{
   public:
-    virtual bool hit(const ray& r, double tmin, double tmax, hit_record& rec) const = 0;
+    virtual bool hit(const ray& r, interval i, hit_record& rec) const = 0;
 };
 
 class hittable_list: public hittable {
@@ -37,16 +38,16 @@ class hittable_list: public hittable {
         objects.push_back(object);
     }
 
-    bool hit(const ray& r, double tmin, double tmax, hit_record& rec)const override;
+    bool hit(const ray& r, interval i, hit_record& rec)const override;
 };
 
-bool hittable_list::hit(const ray& r, double tmin, double tmax, hit_record& rec) const {
+bool hittable_list::hit(const ray& r, interval i, hit_record& rec) const {
     hit_record temp_rec;
     bool hit_any = false;
-    auto closest_so_far = tmax;
+    auto closest_so_far = i.max;
 
     for (const auto& object : objects){
-        if (object->hit(r, tmin, closest_so_far, temp_rec)){
+        if (object->hit(r, interval(i.min, closest_so_far), temp_rec)){
             hit_any = true;
             closest_so_far = temp_rec.t;
             rec = temp_rec;
