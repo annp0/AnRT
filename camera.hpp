@@ -3,6 +3,7 @@
 
 #include "color.hpp"
 #include "hittable.hpp"
+#include "ray.hpp"
 
 #include <iostream>
 
@@ -10,6 +11,7 @@ class camera{
   public:
     double ratio;
     int image_width;
+    int samples_per_pixel;
 
     void render(const hittable& world);
 
@@ -22,6 +24,11 @@ class camera{
 
     void initialize();
     rgb ray_rgb(const ray& r, const hittable& world);
+    ray get_ray(int i, int j) const;
+    vec3 sample_pixel() const {
+        return ((-0.5 + random_double()) * pixel_x) +
+               ((-0.5 + random_double()) * pixel_y);
+    }
 };
 
 void camera::initialize(){
@@ -57,14 +64,22 @@ void camera::render(const hittable& world){
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
     for (int j = 0; j < image_height; j++){
         for (int i = 0; i < image_width; i++){ 
-            auto pixel_position = pixel_topleft + (i * pixel_x) - (j * pixel_y);
-            auto ray_direction = pixel_position - camera_position;
-            ray r(camera_position, ray_direction);
-            rgb color = ray_rgb(r, world);
-            write_rgb(std::cout, color);
+            rgb pixel_color(0,0,0);
+            for (int sample = 0; sample < samples_per_pixel; sample++){
+                ray r = get_ray(i,j);
+                pixel_color += ray_rgb(r, world);
+            }
+            write_rgb(std::cout, pixel_color, samples_per_pixel);
         }
+        std::cout << "\n"; 
     }
     std::clog << "Done.\n";
+}
+
+ray camera::get_ray(int i, int j) const {
+    auto pixel_center = pixel_topleft + (i * pixel_x) - (j * pixel_y);
+    auto pixel_sample = pixel_center + sample_pixel();
+    return ray(camera_position, pixel_sample - camera_position);
 }
 
 #endif
