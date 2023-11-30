@@ -12,6 +12,7 @@ class camera{
     double ratio;
     int image_width;
     int samples_per_pixel;
+    int max_recursion_depth;
 
     void render(const hittable& world);
 
@@ -23,7 +24,7 @@ class camera{
     point3 pixel_y;
 
     void initialize();
-    rgb ray_rgb(const ray& r, const hittable& world);
+    rgb ray_rgb(const ray& r, int depth, const hittable& world);
     ray get_ray(int i, int j) const;
     vec3 sample_pixel() const {
         return ((-0.5 + random_double()) * pixel_x) +
@@ -46,10 +47,14 @@ void camera::initialize(){
                         0.5 * (pixel_x - pixel_y);
 }
 
-rgb camera::ray_rgb(const ray& r, const hittable& world){
+rgb camera::ray_rgb(const ray& r, int depth, const hittable& world){
     hit_record rec;
-    if (world.hit(r, interval(0, infinity), rec)){
-        return 0.5 * (rec.normal + rgb(1,1,1));
+
+    if (depth <= 0) return rgb(0, 0, 0);
+
+    if (world.hit(r, interval(0.0001, infinity), rec)){
+        vec3 direction = random_unit_vec_front(rec.normal);
+        return 0.5 * ray_rgb(ray(rec.point, direction), depth - 1, world);
     }
     
     vec3 unit_direction = unit(r.direction());
@@ -67,7 +72,7 @@ void camera::render(const hittable& world){
             rgb pixel_color(0,0,0);
             for (int sample = 0; sample < samples_per_pixel; sample++){
                 ray r = get_ray(i,j);
-                pixel_color += ray_rgb(r, world);
+                pixel_color += ray_rgb(r, max_recursion_depth, world);
             }
             write_rgb(std::cout, pixel_color, samples_per_pixel);
         }

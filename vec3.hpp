@@ -1,6 +1,8 @@
 #ifndef VEC3_HPP
 #define VEC3_HPP
 
+#include "utility.hpp"
+
 #include<iostream>
 #include<cmath>
 
@@ -93,6 +95,20 @@ vec3 cross(const vec3 &v1, const vec3 &v2){
 
 vec3 unit(const vec3 &v){
     return v / v.norm();
+}
+
+vec3 random_unit_vec(){
+    vec3 result = vec3(random_double(-1, 1), random_double(-1, 1), random_double(-1, 1));
+    if (result.norm_squared() == 0){
+        return random_unit_vec();
+    }
+    return unit(result);
+}
+
+vec3 random_unit_vec_front(const vec3& normal){
+    vec3 result = random_unit_vec();
+    if (dot(result, normal) > 0) return result;
+    else return - result;
 }
 
 #endif

@@ -12,7 +12,6 @@ This will produce the `anrt` binary.
 
 ## Usage
 
-run
 ```
-anrt -h
+./anrt > image.ppm
 ```
