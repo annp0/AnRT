@@ -114,4 +114,11 @@ vec3 reflect(const vec3& v, const vec3& n){
     return v - 2 * dot(v, n) * n;
 }
 
+vec3 refract(const vec3& v, const vec3& n, double refractive_index){
+    auto cos = fmin(dot(-v, n), 1.0);
+    vec3 r_out_perp = refractive_index * (v + cos * n);
+    vec3 r_out_para = -sqrt(fabs(1.0 - r_out_perp.norm_squared())) * n;
+    return r_out_perp + r_out_para;
+}
+
 #endif

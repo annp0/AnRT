@@ -6,21 +6,35 @@
 int main(){
     hittable_list world;
 
-    auto material_ground = make_shared<diffuse>(rgb(0.8, 0.8, 0.0));
-    auto material_center = make_shared<diffuse>(rgb(0.7, 0.3, 0.3));
-    auto material_left   = make_shared<metal>(rgb(0.8, 0.8, 0.8));
-    auto material_right  = make_shared<metal>(rgb(0.8, 0.6, 0.2));
+    auto ground_material = make_shared<diffuse>(rgb(0.5, 0.5, 0.5));
+    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground_material));
 
-    world.add(make_shared<sphere>(point3( 0.0, -100.5, -1.0), 100.0, material_ground));
-    world.add(make_shared<sphere>(point3( 0.0,    -0.4, -1.0),   0.1, material_center));
-    world.add(make_shared<sphere>(point3(-0.5,    -0.1, -1.2),   0.4, material_left));
-    world.add(make_shared<sphere>(point3( 0.3,    -0.3, -1.3),   0.2, material_right));
+    auto material1 = make_shared<dielectric>(1.5);
+    world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material1));
+    world.add(make_shared<sphere>(point3(3, 0.2, 1.1), 0.2, material1));
+    world.add(make_shared<sphere>(point3(3, 0.2, -2.1), 0.2, material1));
+    world.add(make_shared<sphere>(point3(3, 0.2, 2), 0.2, material1));
+
+    world.add(make_shared<sphere>(point3(0, 0.5, 0), 0.5, material1));
+    world.add(make_shared<sphere>(point3(-3, 0.1, 2), 0.1, 
+    make_shared<diffuse_light>(rgb(10, 10, 10))));
+    world.add(make_shared<sphere>(point3(-4, 3, 1), 1, 
+    make_shared<diffuse_light>(rgb(50, 50, 50))));
+
+    auto material3 = make_shared<metal>(rgb(0.7, 0.6, 0.5), 0.0);
+    world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material3));
+
     camera cam;
 
     cam.ratio = 16.0 / 9.0;
-    cam.image_width = 1080;
-    cam.samples_per_pixel = 100;
+    cam.image_width = 1920;
+    cam.samples_per_pixel = 500;
     cam.max_recursion_depth = 50;
-    
+
+    cam.v_fov = 20;
+    cam.position = point3(13,2,3);
+    cam.focus = point3(0,0,0);
+    cam.up = vec3(0,1,0);
+    cam.night = 1;
     cam.render(world);
 }
