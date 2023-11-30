@@ -105,10 +105,13 @@ vec3 random_unit_vec(){
     return unit(result);
 }
 
-vec3 random_unit_vec_front(const vec3& normal){
-    vec3 result = random_unit_vec();
-    if (dot(result, normal) > 0) return result;
-    else return - result;
+bool is_near_zero(const vec3& v){
+    auto s = 1e-8;
+    return (fabs(v[0]) < s) && (fabs(v[1]) < s) && (fabs(v[2]) < s);
+}
+
+vec3 reflect(const vec3& v, const vec3& n){
+    return v - 2 * dot(v, n) * n;
 }
 
 #endif

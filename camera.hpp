@@ -4,6 +4,7 @@
 #include "color.hpp"
 #include "hittable.hpp"
 #include "ray.hpp"
+#include "material.hpp"
 
 #include <iostream>
 
@@ -53,8 +54,11 @@ rgb camera::ray_rgb(const ray& r, int depth, const hittable& world){
     if (depth <= 0) return rgb(0, 0, 0);
 
     if (world.hit(r, interval(0.0001, infinity), rec)){
-        vec3 direction = random_unit_vec_front(rec.normal);
-        return 0.5 * ray_rgb(ray(rec.point, direction), depth - 1, world);
+        ray scattered;
+        rgb attenuation;
+        if (rec.mat->scatter(r, rec, attenuation, scattered))
+            return attenuation * ray_rgb(scattered, depth - 1, world);
+        return rgb(0,0,0);
     }
     
     vec3 unit_direction = unit(r.direction());

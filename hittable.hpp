@@ -10,10 +10,13 @@
 using std::shared_ptr;
 using std::make_shared;
 
+class material;
+
 class hit_record{
   public:
     point3 point;
     vec3 normal;
+    shared_ptr<material> mat;
     double t;
     bool front;
 

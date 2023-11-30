@@ -6,11 +6,15 @@
 /* Record color in RGB value */
 using rgb = vec3;
 
+double linear_2_gamma(double linear){
+    return sqrt(linear);
+}
+
 void write_rgb(std::ostream &out, rgb color, int samples_per_pixel){
     auto scale = 1.0 / samples_per_pixel;
-    auto r = color.x() * scale;
-    auto g = color.y() * scale;
-    auto b = color.z() * scale;
+    auto r = linear_2_gamma(color.x() * scale);
+    auto g = linear_2_gamma(color.y() * scale);
+    auto b = linear_2_gamma(color.z() * scale);
     
     static const interval range(0.000, 0.999);
     out << static_cast<int>(256 * range.clamp(r)) << ' '
