@@ -43,4 +43,4 @@ There are 4 types of materials:
 
 - `dielectric`: Class for glass-like objects. Takes in one argument - its refractive index relative to air.
 
-The parameters for class `camera` is straightforward. When `night` is set to `0`, the background will be the while-blue sky-like texture and will light up the scene. When `night` is set to `1`, the background will be pure darkness and explicit lighting is required to light up the scene.
+The parameters for class `camera` is straightforward. When `night` is set to `0`, the background will be the blue-white sky-like texture and will light up the scene. When `night` is set to `1`, the background will be pure darkness and explicit lighting is required to light up the scene.
